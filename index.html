@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Голосование за кандидатов</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --card-bg: #ffffff;
+      --primary: #0056b3;
+      --border: #e0e6ed;
+      --text: #333;
+    }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: var(--primary);
+    }
+    .candidates {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+    @media (max-width: 768px) {
+      .candidates { grid-template-columns: 1fr; }
+    }
+    .candidate-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .candidate-photo {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+    .candidate-name {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    .candidate-desc {
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .vote-checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .vote-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    button#submit-vote {
+      display: block;
+      margin: 40px auto 0;
+      padding: 14px 32px;
+      font-size: 1rem;
+      background-color: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button#submit-vote:hover {
+      background-color: #004494;
+    }
+    #vote-result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Выберите кандидата</h1>
+
+    <form id="vote-form">
+      <div class="candidates">
+        <!-- Кандидат 1 -->
+        <div class="candidate-card">
+          <img src="https://via.placeholder.com/180x180?text=Фото+1" alt="Фото кандидата 1" class="candidate-photo">
+          <div class="candidate-name">Иванов Иван Иванович</div>
+          <div class="candidate-desc">
+            Опытный руководитель, 10 лет в сфере ЖКХ. Приоритеты: благоустройство дворов, ремонт дорог, поддержка старшего поколения.
+          </div>
+          <label class="vote-checkbox-wrapper">
+            <input type="checkbox" name="candidate" value="Иванов И.И." class="vote-checkbox">
+            Проголосовать за Иванова И.И.
+          </label>
+        </div>
+
+        <!-- Кандидат 2 -->
+        <div class="candidate-card">
+          <img src="https://via.placeholder.com/180x180?text=Фото+2" alt="Фото кандидата 2" class="candidate-photo">
+          <div class="candidate-name">Петрова Анна Сергеевна</div>
+          <div class="candidate-desc">
+            Молодой специалист, фокус на молодёжной политике и цифровизации. Приоритеты: спортплощадки, IT-образование, онлайн-приём граждан.
+          </div>
+          <label class="vote-checkbox-wrapper">
+            <input type="checkbox" name="candidate" value="Петрова А.С." class="vote-checkbox">
+            Проголосовать за Петрову А.С.
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" id="submit-vote">Отправить голос</button>
+    </form>
+
+    <div id="vote-result"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('vote-form');
+    const resultDiv = document.getElementById('vote-result');
+
+    // Хранилище голосов (в браузере)
+    let votes = JSON.parse(localStorage.getItem('myVoteResults')) || {
+      'Иванов И.И.': 0,
+      'Петрова А.С.': 0
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const checkboxes = document.querySelectorAll('input[name="candidate"]:checked');
+      if (checkboxes.length === 0) {
+        alert('Пожалуйста, выберите хотя бы одного кандидата.');
+        return;
+      }
+
+      // Считаем голоса
+      checkboxes.forEach(cb => {
+        const val = cb.value;
+        if (votes[val] === undefined) votes[val] = 0;
+        votes[val]++;
+      });
+
+      localStorage.setItem('myVoteResults', JSON.stringify(votes));
+
+      // Показываем результат
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = `
+        <h2>Спасибо, ваш голос учтён!</h2>
+        <p>Текущие результаты:</p>
+        <ul style="text-align: left; display: inline-block;">
+          ${Object.entries(votes).map(([name, count]) => `<li>${name}: ${count} голосов</li>`).join('')}
+        </ul>
+      `;
+    });
+  </script>
+</body>
+</html>
