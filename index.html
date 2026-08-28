@@ -92,7 +92,7 @@
     IT-образование.
   </div>
   <label class="vote-wrapper">
-    <input type="radio" name="candidate" value="sokolova" class="vote-radio" required>
+    <input type="radio" name="candidate" value="petrova" class="vote-radio" required>
     Голосовать за Смирнову К.А.
   </label>
 </div>
@@ -106,7 +106,7 @@
 
   <script>
     // Вставка URL Google-таблицы
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyA0zVcueGA1vHowAO3St5CzLyw3HTkwHehTcrA_Tu9k08JTlcVacFn5EVanxUwxSbr/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8QCMStyr4f18EMeihw-XXKwbK7UvnBm2sNafLTjz5CTfSrGsP9wXDN1ERMxVKfUDZ7g/exec';
 
     const form = document.getElementById('vote-form');
     const message = document.getElementById('message');
@@ -121,7 +121,9 @@
       submitBtn.textContent = 'Отправка...';
 
       try {
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        const resp = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ candidate: selected.value })
         });
         const data = await resp.json();
